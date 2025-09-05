@@ -1,61 +1,49 @@
 # Idea-Generator
-ATM VOD Idea Generator
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atmosphere Video Compilation Ideas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            font-size: 2rem;
-            color: #333;
-        }
-        button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-        }
-        p#idea {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #666;
-            margin-top: 30px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Atmosphere Video Compilation Ideas Generator</h1>
-    <button id="generateIdeaBtn">Generate Idea</button>
-    <p id="idea"></p>
-    <script>
-        const ideas = [
-            'Nature and Wildlife Compilation',
-            'City Skylines and Architecture Compilation',
-            'Extreme Sports Highlights',
-            'Underwater Adventures',
-            'Aerial Drone Footage',
-            'Breathtaking Landscapes',
-            'Travel Destinations around the World',
-            'Inspiring Time-lapses'
-        ];
-        document.getElementById('generateIdeaBtn').addEventListener('click', function() {
-            const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
-            document.getElementById('idea').innerHTML = randomIdea;
-        });
-    </script>
-</body>
-</html>
+
+Python application that scans Airtable contributor data and Canto clip information to generate content ideas for Chive TV editors.
+
+## Features
+
+- Fetch active contributors from Airtable using the `Status` field and their `Tags`.
+- Read a manually exported list of clip names from JDownloader LinkGrabber and match them with Canto assets.
+- Scan Canto albums for clips; parse file names (`Contributor_UniqueURL_IG.mp4`) to determine contributor credit and collect tags and descriptions.
+- Consider clip descriptions as additional keywords and pull trending topics from the internet (Google Trends) to enrich ideas.
+- Generate ideas tagged as seasonal, trending, or silly.
+- Log suggestions to Google Sheets and/or a local CSV file to avoid duplication.
+- Tkinter GUI displays the generated ideas and includes a background scheduler that runs every Monday at 07:00 ET.
+
+## Configuration
+
+Set these environment variables:
+
+```
+AIRTABLE_API_KEY        Airtable API key
+AIRTABLE_BASE_ID        Airtable base ID containing contributors
+AIRTABLE_TABLE_NAME     Table name (defaults to "Contributors")
+CANTO_API_TOKEN         Canto API token
+CANTO_ALBUM_ID          Canto album ID to scan
+GOOGLE_SHEETS_CRED_FILE Path to service-account credentials JSON
+GOOGLE_SHEETS_SHEET_ID  Google Sheet ID for logging
+JDOWNLOADER_LIST_FILE   Path to text file exported from JDownloader
+IDEAS_LOG_FILE          Path to local CSV for logging generated ideas
+```
+
+## Usage
+
+Install dependencies:
+
+```
+pip install requests gspread google-auth
+```
+
+Run the GUI:
+
+```
+python app.py
+```
+
+The app starts a scheduler for the weekly job and provides a **Run Now** button for manual execution.
+
+## Logging
+
+Ideas are appended to the provided Google Sheet and/or the local CSV file with clip ID, contributor, tags, and timestamp. The log can be used to suppress repeats for six months or longer.
